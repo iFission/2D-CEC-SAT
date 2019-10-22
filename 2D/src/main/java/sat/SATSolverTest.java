@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
+import sat.env.Bool;
 /*
 import static org.junit.Assert.*;
 
@@ -17,8 +18,8 @@ import sat.formula.Literal;
 import sat.formula.PosLiteral;
 
 public class SATSolverTest {
-    Literal a = PosLiteral.make("a");
-    Literal b = PosLiteral.make("b");
+    static Literal a = PosLiteral.make("a");
+    static Literal b = PosLiteral.make("b");
     Literal c = PosLiteral.make("c");
     Literal na = a.getNegation();
     Literal nb = b.getNegation();
@@ -97,17 +98,16 @@ public class SATSolverTest {
         }
 
         System.out.println(currentFormula.toString());
+        Environment e = SATSolver.solve(makeFm(makeCl(a, b)));
+        System.out.println(e.toString());
     }
 
     public void testSATSolver1() {
         // (a v b)
         Environment e = SATSolver.solve(makeFm(makeCl(a, b)));
-        /*
-            	assertTrue( "one of the literals should be set to true",
-            			Bool.TRUE == e.get(a.getVariable())  
-            			|| Bool.TRUE == e.get(b.getVariable())	);
-            	
-        */
+        // assertTrue("one of the literals should be set to true",
+        // Bool.TRUE == e.get(a.getVariable()) || Bool.TRUE == e.get(b.getVariable()));
+
     }
 
     public void testSATSolver2() {
