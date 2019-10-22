@@ -5,11 +5,14 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
+
+import immutable.EmptyImList;
 import immutable.ImList;
 import sat.env.Environment;
 import sat.formula.Clause;
 import sat.formula.Formula;
 import sat.formula.Literal;
+import sat.formula.NegLiteral;
 import sat.formula.PosLiteral;
 
 /**
@@ -25,41 +28,12 @@ public class SATSolver {
      * @return an environment for which the problem evaluates to Bool.TRUE, or
      *         null if no such environment exists.
      */
-    /**
-     * 	- If there are no clauses, the formula is trivially satisfiable. 
-        - If there is an empty clause, the clause list is unsatisfiable -- fail and backtrack. (use empty 
-            clause to denote a clause evaluated to FALSE based on the variable binding in the 
-            environment) 
-        - Otherwise, find the smallest clause (by number of literals). 
-            - If the clause has only one literal, bind its variable in the environment so that the clause is satisfied, substitute for the variable in all the other clauses (using the suggested substitute() method), and recursively call solve(). 
-            - Otherwise, pick an arbitrary literal from this small clause:
-                § First try setting the literal to TRUE, substitute for it in all the clauses, then 
-                solve() recursively.
-                § If that fails, then try setting the literal to FALSE, substitute, and solve() 
-                recursively. 
-    
-     */
-
     public static Environment solve(Formula formula) {
         // TODO: implement this.
-        throw new RuntimeException("not yet implemented.");
-        //     if (formula.getClauses() == null) {
-        //         // return environment trival case;
-
-        //     }
-        //     else if (formula.getClauses() == empty) {
-        //         // fail and check back
-        //     }
-        //     else find the smallest clause (by # literals)
-        //         if cause has 1 literal
-        //             assign to environment so that the clause is satisfid
-        //             subsitute for the variable in all other clauses, with substitute()
-        //             recursively call solve()
-        //         else
-        //             pick arbitrary literal from the smallest clause
-        //                 try:set the literal to True, substitute all, call solve()
-        //                 except:
-        //                     set literal to false, substitute all, solve()
+        //throw new RuntimeException("not yet implemented.");
+        Environment env = new Environment(); //Create new environment
+        ImList<Clause> clauses = formula.getClauses();// get clauses from Formula
+        return solve( clauses, env);
 
     }
 
@@ -77,8 +51,49 @@ public class SATSolver {
      */
     private static Environment solve(ImList<Clause> clauses, Environment env) {
         // TODO: implement this.
-        throw new RuntimeException("not yet implemented.");
-    }
+        //throw new RuntimeException("not yet implemented.");
+        //If there are no clauses, the formula is trivially satisfiable...
+        if (clauses.isEmpty()){
+            return env;
+        }
+        Clause minimum = clauses.first();
+        for (Clause c: clauses){
+            if (c.size()>minimum.size()){
+                minimum=c;
+            }
+            if (minimum.isEmpty()){
+                return null;
+            }
+        }
+        if(minimum.isUnit()){
+            Literal l = minimum.chooseLiteral();
+            Environment environment1 = env;
+            if (l instanceof PosLiteral){
+                environment1= env.putTrue(l.getVariable());
+            }
+            else if (l instanceof NegLiteral){
+                environment1= env.putFalse(l.getVariable());
+            }
+            ImList<Clause> clauses1 = substitute(clauses,l); //get newClauses to return for environment1
+            return(solve(clauses1,environment1));  //recursively call solve()
+        }
+        else{
+            Literal l = minimum.chooseLiteral();
+            Environment envT= env.putTrue(l.getVariable());
+            ImList<Clause> clausesT = substitute(clauses,l);
+            Environment resT= solve(clausesT, envT);
+
+            if (resT==null){
+                Environment envF= env.putFalse(l.getVariable());
+                ImList<Clause> clausesF = substitute(clauses,l.getNegation());
+                Environment resF = solve(clausesF, envF);
+                return resF;}
+            else{
+                return resT;
+
+        }
+
+        }}
 
     /**
      * given a clause list and literal, produce a new list resulting from
@@ -90,9 +105,18 @@ public class SATSolver {
      *            , a literal to set to true
      * @return a new list of clauses resulting from setting l to true
      */
-    private static ImList<Clause> substitute(ImList<Clause> clauses, Literal l) {
+    private static ImList<Clause> substitute(ImList<Clause> clauses,
+            Literal l) {
         // TODO: implement this.
-        throw new RuntimeException("not yet implemented.");
+        //throw new RuntimeException("not yet implemented.");
+        ImList<Clause> newClauses = new EmptyImList<Clause>();
+        for ( Clause c: clauses){
+            Clause newC = c.reduce(l); // Creating a simplified clause (newC) to add into newClauses
+            if (newC!= null){
+                newClauses= newClauses.add(newC);
+            }
+        }
+        return newClauses;
     }
 
 }
