@@ -100,6 +100,15 @@ public class SATSolverTest {
         System.out.println(currentFormula.toString());
         Environment e = SATSolver.solve(makeFm(makeCl(a, b)));
         System.out.println(e.toString());
+
+        System.out.println("SAT solver starts!!!");
+        long started = System.nanoTime();
+        Environment currentE = SATSolver.solve(currentFormula);
+        long time = System.nanoTime();
+        long timeTaken= time - started;
+        System.out.println("Time:" + timeTaken/1000000.0 + "ms");
+        System.out.println(currentE.toString());
+
     }
 
     public void testSATSolver1() {
