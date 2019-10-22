@@ -50,13 +50,13 @@ public class SATSolverTest {
             System.out.println("Test 2 passed");
         }
 
-        System.out.println("SAT parse starts!!!");
+        System.out.println("SAT parser starts!!!");
         long startedParser = System.nanoTime();
-        Formula currentFormula = parseFormula("/Users/ALEX/Documents/2D-CEC-SAT/2D/src/main/java/sampleCNF/s8Sat.cnf");
+        Formula currentFormula = parseFormula("/Volumes/Media/Dls/unsat1.cnf");
         long timeParser = System.nanoTime();
         long timeTakenParser = timeParser - startedParser;
         System.out.println("Time:" + timeTakenParser / 1000000.0 + "ms");
-        // System.out.println(currentFormula.toString());
+        System.out.println(currentFormula.toString());
 
         System.out.println("SAT solver starts!!!");
         long started = System.nanoTime();
@@ -87,7 +87,7 @@ public class SATSolverTest {
                         // System.out.println("It is a problem " + line);
                     } else {
                         // System.out.println("It is a clause " + line);
-                        String clause[] = line.split(" ");
+                        String clause[] = line.trim().split(" ");
                         Clause currentClause = new Clause();
                         for (String variable : clause) {
 
