@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
+import sat.env.Bool;
 /*
 import static org.junit.Assert.*;
 
@@ -20,7 +21,7 @@ public class SATSolverTest {
     static Literal a = PosLiteral.make("a");
     static Literal b = PosLiteral.make("b");
     Literal c = PosLiteral.make("c");
-    Literal na = a.getNegation();
+    static Literal na = a.getNegation();
     Literal nb = b.getNegation();
     Literal nc = c.getNegation();
 
@@ -38,6 +39,16 @@ public class SATSolverTest {
     
     */
     public static void main(String[] args) {
+        // testSATSolver1
+        Environment e = SATSolver.solve(makeFm(makeCl(a, b)));
+        if (Bool.TRUE == e.get(a.getVariable()) || Bool.TRUE == e.get(b.getVariable())) {
+            System.out.println("Test 1 passed");
+        }
+        // testSATSolver2
+        e = SATSolver.solve(makeFm(makeCl(na)));
+        if (Bool.FALSE == e.get(na.getVariable())) {
+            System.out.println("Test 2 passed");
+        }
 
         System.out.println("SAT parse starts!!!");
         long startedParser = System.nanoTime();
@@ -114,9 +125,7 @@ public class SATSolverTest {
 
     public void testSATSolver1() {
         // (a v b)
-        Environment e = SATSolver.solve(makeFm(makeCl(a, b)));
         // assertTrue("one of the literals should be set to true",
-        // Bool.TRUE == e.get(a.getVariable()) || Bool.TRUE == e.get(b.getVariable()));
 
     }
 
