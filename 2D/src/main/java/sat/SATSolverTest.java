@@ -5,7 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
-import sat.env.Bool;
 /*
 import static org.junit.Assert.*;
 
@@ -39,8 +38,26 @@ public class SATSolverTest {
     
     */
     public static void main(String[] args) {
-        String path = "/Users/ALEX/Documents/2D-CEC-SAT/2D/src/main/java/sampleCNF/s8Sat.cnf";
 
+        System.out.println("SAT parse starts!!!");
+        long startedParser = System.nanoTime();
+        Formula currentFormula = parseFormula("/Users/ALEX/Documents/2D-CEC-SAT/2D/src/main/java/sampleCNF/s8Sat.cnf");
+        long timeParser = System.nanoTime();
+        long timeTakenParser = timeParser - startedParser;
+        System.out.println("Time:" + timeTakenParser / 1000000.0 + "ms");
+        // System.out.println(currentFormula.toString());
+
+        System.out.println("SAT solver starts!!!");
+        long started = System.nanoTime();
+        Environment currentE = SATSolver.solve(currentFormula);
+        long time = System.nanoTime();
+        long timeTaken = time - started;
+        System.out.println("Time:" + timeTaken / 1000000.0 + "ms");
+        System.out.println(currentE.toString());
+
+    }
+
+    public static Formula parseFormula(String path) {
         String line = null;
         Formula currentFormula = new Formula();
 
@@ -52,20 +69,18 @@ public class SATSolverTest {
             while ((line = bufferedReader.readLine()) != null) {
                 if (line.length() > 0) { // check the line is non-empty
                     String firstChar = line.substring(0, 1);
-                    // System.out.println("first char is " + firstChar);
-                    // System.out.println(line.length());
 
                     if (firstChar.equals("c")) {
-                        System.out.println("It is a comment " + line);
+                        // System.out.println("It is a comment " + line);
                     } else if (firstChar.equals("p")) {
-                        System.out.println("It is a problem " + line);
+                        // System.out.println("It is a problem " + line);
                     } else {
-                        System.out.println("It is a clause " + line);
+                        // System.out.println("It is a clause " + line);
                         String clause[] = line.split(" ");
                         Clause currentClause = new Clause();
                         for (String variable : clause) {
 
-                            System.out.println(variable);
+                            // System.out.println(variable);
 
                             if (variable.equals("0")) {
                                 break;
@@ -79,10 +94,10 @@ public class SATSolverTest {
                                 currentLiteral = PosLiteral.make(variable);
                             }
 
-                            System.out.println(currentLiteral.toString());
+                            // System.out.println(currentLiteral.toString());
                             currentClause = currentClause.add(currentLiteral);
                         }
-                        System.out.println(currentClause.toString());
+                        // System.out.println(currentClause.toString());
                         currentFormula = currentFormula.addClause(currentClause);
                     }
 
@@ -93,22 +108,8 @@ public class SATSolverTest {
             System.out.println("Unable to open file '" + path + "'");
         } catch (IOException ex) {
             System.out.println("Error reading file '" + path + "'");
-            // Or we could just do this: 
-            // ex.printStackTrace();
         }
-
-        System.out.println(currentFormula.toString());
-        Environment e = SATSolver.solve(makeFm(makeCl(a, b)));
-        System.out.println(e.toString());
-
-        System.out.println("SAT solver starts!!!");
-        long started = System.nanoTime();
-        Environment currentE = SATSolver.solve(currentFormula);
-        long time = System.nanoTime();
-        long timeTaken= time - started;
-        System.out.println("Time:" + timeTaken/1000000.0 + "ms");
-        System.out.println(currentE.toString());
-
+        return currentFormula;
     }
 
     public void testSATSolver1() {
