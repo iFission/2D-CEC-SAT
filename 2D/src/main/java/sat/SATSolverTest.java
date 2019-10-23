@@ -160,6 +160,10 @@ public class SATSolverTest {
         Environment e = SATSolver.solve(makeFm(makeCl()));
     }
 
+    public void testSATSolver3() {
+        Environment e = SATSolver.solve(makeFm(makeCl()));
+    }
+
     private static Formula makeFm(Clause... e) {
         Formula f = new Formula();
         for (Clause c : e) {

@@ -25,9 +25,9 @@ public class SATSolver {
     public static Environment solve(Formula formula) {
         // TODO: implement this.
         //throw new RuntimeException("not yet implemented.");
-        Environment env = new Environment(); //Create new environment
+        Environment environment = new Environment(); //Create new environment
         ImList<Clause> clauses = formula.getClauses();// get clauses from Formula
-        return solve(clauses, env);
+        return solve(clauses, environment);
 
     }
 
@@ -47,11 +47,11 @@ public class SATSolver {
         // TODO: implement this.
         //throw new RuntimeException("not yet implemented.");
         //If there are no clauses, the formula is trivially satisfiable...
-        if (clauses.isEmpty()) {
+        if (clauses.isEmpty()) { //return null (empty envt)
             return env;
         }
-        Clause minimum = clauses.first();
-        for (Clause c : clauses) {
+        Clause minimum = clauses.first(); //find the first clause
+        for (Clause c : clauses) { //find the smallest clause
             if (c.size() < minimum.size()) {
                 minimum = c;
             }
@@ -62,26 +62,28 @@ public class SATSolver {
         if (minimum.isUnit()) { //to find clause with one literal only
             Literal l = minimum.chooseLiteral();
             Environment environment1 = env;
-            if (l instanceof PosLiteral) {
+            if (l instanceof PosLiteral) { //put literal == True first
                 environment1 = env.putTrue(l.getVariable());
-            } else if (l instanceof NegLiteral) {
+            } else if (l instanceof NegLiteral) { //if its negated var , then == False
                 environment1 = env.putFalse(l.getVariable());
             }
             ImList<Clause> clauses1 = substitute(clauses, l); //get newClauses to return for environment1
             return (solve(clauses1, environment1)); //recursively call solve()
-        } else {
+        } else { //Otherwise, pick an arbitrary literal from this small clause: First try setting the literal to TRUE, substitute for it in all the clauses, then solve() recursively
+
             Literal l = minimum.chooseLiteral();
             Environment envT = env.putTrue(l.getVariable());
             ImList<Clause> clausesT = substitute(clauses, l);
-            Environment resT = solve(clausesT, envT);
+            Environment resultT = solve(clausesT, envT);
 
-            if (resT == null) {
+            if (resultT == null) { //If that fails, then try setting the literal to FALSE, substitute, and solve() recursively.
+
                 Environment envF = env.putFalse(l.getVariable());
                 ImList<Clause> clausesF = substitute(clauses, l.getNegation());
-                Environment resF = solve(clausesF, envF);
-                return resF;
+                Environment resultF = solve(clausesF, envF);
+                return resultF;
             } else {
-                return resT;
+                return resultT;
 
             }
 
@@ -103,17 +105,20 @@ public class SATSolver {
         //throw new RuntimeException("not yet implemented.");
         Clause newC = new Clause();
         ImList<Clause> newClauses = new EmptyImList<Clause>();
-        if (clauses.isEmpty()){
-            return newClauses;
+        if (clauses.isEmpty()) {
+            return newClauses; //if clauses is empty then it is deemed as false. Returning a new empty clause == False in boolean , therefore null will be returned when solve() is called.
         }
+
         for (Clause c : clauses) {
-            if (!c.isEmpty() && c!=null){
-                newC = c.reduce(l);} // Creating a simplified clause (newC) to add into newClauses
+            if (!c.isEmpty() && c != null) { //safety net
+                newC = c.reduce(l);
+            } // Creating a simplified clause (newC) to add into newClauses
             if (newC != null) {
                 newClauses = newClauses.add(newC);
             }
         }
-        return newClauses;
+
+        return newClauses; //return the reduced clause form for substitute() , for the ENTIRE formula
     }
 
 }
