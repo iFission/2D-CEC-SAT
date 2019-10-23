@@ -1,4 +1,3 @@
-
 package sat;
 
 import immutable.EmptyImList;
@@ -19,7 +18,7 @@ public class SATSolver {
      * unit propagation. The returned environment binds literals of class
      * bool.Variable rather than the special literals used in clausification of
      * class clausal.Literal, so that clients can more readily use it.
-     * 
+     *
      * @return an environment for which the problem evaluates to Bool.TRUE, or
      *         null if no such environment exists.
      */
@@ -35,7 +34,7 @@ public class SATSolver {
     /**
      * Takes a partial assignment of variables to values, and recursively
      * searches for a complete satisfying assignment.
-     * 
+     *
      * @param clauses
      *            formula in conjunctive normal form
      * @param env
@@ -53,14 +52,14 @@ public class SATSolver {
         }
         Clause minimum = clauses.first();
         for (Clause c : clauses) {
-            if (c.size() > minimum.size()) {
+            if (c.size() < minimum.size()) {
                 minimum = c;
             }
             if (minimum.isEmpty()) {
                 return null;
             }
         }
-        if (minimum.isUnit()) {
+        if (minimum.isUnit()) { //to find clause with one literal only
             Literal l = minimum.chooseLiteral();
             Environment environment1 = env;
             if (l instanceof PosLiteral) {
@@ -92,7 +91,7 @@ public class SATSolver {
     /**
      * given a clause list and literal, produce a new list resulting from
      * setting that literal to true
-     * 
+     *
      * @param clauses
      *            , a list of clauses
      * @param l
@@ -102,9 +101,14 @@ public class SATSolver {
     private static ImList<Clause> substitute(ImList<Clause> clauses, Literal l) {
         // TODO: implement this.
         //throw new RuntimeException("not yet implemented.");
+        Clause newC = new Clause();
         ImList<Clause> newClauses = new EmptyImList<Clause>();
+        if (clauses.isEmpty()){
+            return newClauses;
+        }
         for (Clause c : clauses) {
-            Clause newC = c.reduce(l); // Creating a simplified clause (newC) to add into newClauses
+            if (!c.isEmpty() && c!=null){
+                newC = c.reduce(l);} // Creating a simplified clause (newC) to add into newClauses
             if (newC != null) {
                 newClauses = newClauses.add(newC);
             }
