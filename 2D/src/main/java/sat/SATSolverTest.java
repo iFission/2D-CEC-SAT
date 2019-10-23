@@ -52,7 +52,7 @@ public class SATSolverTest {
 
         System.out.println("SAT parse starts!!!");
         long startedParser = System.nanoTime();
-        Formula currentFormula = parseFormula("/Users/ALEX/Documents/2D-CEC-SAT/2D/src/main/java/sampleCNF/s8Sat.cnf");
+        Formula currentFormula = parseFormula("/Users/alexisei/Downloads/largeUnsat.cnf");
         long timeParser = System.nanoTime();
         long timeTakenParser = timeParser - startedParser;
         System.out.println("Time:" + timeTakenParser / 1000000.0 + "ms");
@@ -135,6 +135,9 @@ public class SATSolverTest {
         /*
             	assertEquals( Bool.FALSE, e.get(na.getVariable()));
         */
+    }
+    public void testSATSolver3(){
+        Environment e = SATSolver.solve(makeFm(makeCl()));
     }
 
     private static Formula makeFm(Clause... e) {
