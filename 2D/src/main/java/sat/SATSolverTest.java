@@ -1,8 +1,10 @@
 package sat;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 
 import sat.env.Bool;
@@ -56,7 +58,7 @@ public class SATSolverTest {
         long timeParser = System.nanoTime();
         long timeTakenParser = timeParser - startedParser;
         System.out.println("Time:" + timeTakenParser / 1000000.0 + "ms");
-        System.out.println(currentFormula.toString());
+        // System.out.println(currentFormula.toString());
 
         System.out.println("SAT solver starts!!!");
         long started = System.nanoTime();
@@ -64,7 +66,7 @@ public class SATSolverTest {
         long time = System.nanoTime();
         long timeTaken = time - started;
         System.out.println("Time:" + timeTaken / 1000000.0 + "ms");
-        System.out.println(currentE.toString());
+        parseOutput(currentE);
 
     }
 
@@ -73,9 +75,7 @@ public class SATSolverTest {
         Formula currentFormula = new Formula();
 
         try {
-            FileReader fileReader = new FileReader(path);
-
-            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(path));
 
             while ((line = bufferedReader.readLine()) != null) {
                 if (line.length() > 0) { // check the line is non-empty
@@ -123,6 +123,25 @@ public class SATSolverTest {
         return currentFormula;
     }
 
+    public static void parseOutput(Environment e) {
+        if (e != null) {
+            System.out.println("satisfiable");
+
+            String fileName = "BoolAssignment.txt";
+            try {
+                BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(fileName));
+                bufferedWriter.write(e.toString().replace("Environment:[", "").replace("]", "").replace("->", ":")
+                        .replace(", ", "\n"));
+                bufferedWriter.close();
+            } catch (IOException ex) {
+                System.out.println("Error writing to file '" + fileName + "'");
+            }
+
+        } else {
+            System.out.println("not satisfiable");
+        }
+    }
+
     public void testSATSolver1() {
         // (a v b)
         // assertTrue("one of the literals should be set to true",
@@ -136,7 +155,8 @@ public class SATSolverTest {
             	assertEquals( Bool.FALSE, e.get(na.getVariable()));
         */
     }
-    public void testSATSolver3(){
+
+    public void testSATSolver3() {
         Environment e = SATSolver.solve(makeFm(makeCl()));
     }
 
